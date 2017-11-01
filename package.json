@@ -5,7 +5,7 @@
   "scripts": {
     "start": "serve ./build -s",
     "dev": "budo index.js --pushstate --base / -- -t babelify -t sheetify",
-    "build": "rimraf build && mkdirp build && cp src/index.html build && browserify index.js -t babelify -t sheetify -p [ css-extract -o build/bundle.css ] > build/bundle.js",
+    "build": "node build.js",
     "test": "standard",
     "precommit": "lint-staged",
     "size": "bundlesize"
