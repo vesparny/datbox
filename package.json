@@ -1,0 +1,69 @@
+{
+  "name": "datbox",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "serve ./build -s",
+    "dev": "budo index.js --pushstate --base / -- -t babelify -t sheetify",
+    "build": "rimraf build && mkdirp build && cp src/index.html build && browserify index.js -t babelify -t sheetify -p [ css-extract -o build/bundle.css ] > build/bundle.js",
+    "test": "standard",
+    "precommit": "lint-staged",
+    "size": "bundlesize"
+  },
+  "dependencies": {
+    "choppa": "^1.0.2",
+    "concat-stream": "^1.6.0",
+    "copy-text-to-clipboard": "^1.0.3",
+    "drag-drop": "^2.13.2",
+    "filereader-stream": "^1.0.0",
+    "hyperdrive": "^9.9.2",
+    "percent": "^2.0.0",
+    "preact": "^8.2.6",
+    "preact-router": "^2.5.7",
+    "prettier-bytes": "^1.0.4",
+    "pump": "^1.0.2",
+    "random-access-memory": "^2.4.0",
+    "serve": "^6.4.0",
+    "signalhub": "^4.9.0",
+    "speedometer": "^1.0.0",
+    "tachyons": "^4.9.0",
+    "throttleit": "^1.0.0",
+    "webrtc-swarm": "^2.9.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babelify": "^8.0.0",
+    "budo": "^10.0.4",
+    "bundlesize": "^0.15.3",
+    "concurrently": "^3.5.0",
+    "css-extract": "^1.2.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.3.0",
+    "mkdirp": "^0.5.1",
+    "prettier": "^1.7.4",
+    "rimraf": "^2.6.2",
+    "sheetify": "^6.2.0",
+    "standard": "^10.0.3",
+    "uglify-es": "^3.1.6"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": []
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "standard --fix",
+      "git add"
+    ]
+  },
+  "bundlesize": [
+    {
+      "path": "./build/*.js"
+    }
+  ]
+}
