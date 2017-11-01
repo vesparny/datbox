@@ -5,13 +5,21 @@ const { h, Component } = require('preact')
 const Archive = require('./archive')
 
 module.exports = class Downlaod extends Component {
-  render() {
+  render () {
     return (
       <Archive
         id={this.props.id}
-        render={({ files, ready, peers, archive, tooLong, waiting, downloadFile }) => {
+        render={({
+          files,
+          ready,
+          peers,
+          archive,
+          tooLong,
+          waiting,
+          downloadFile
+        }) => {
           return (
-            <div class="tc">
+            <div class='tc'>
               {files &&
                 files.map(file => {
                   const downloadProgress = file.size
@@ -42,9 +50,7 @@ module.exports = class Downlaod extends Component {
                   Try to reload the page
                 </div>
               )}
-              {waiting && (
-                <div>Connecting...</div>
-              )}
+              {waiting && <div>Connecting...</div>}
             </div>
           )
         }}

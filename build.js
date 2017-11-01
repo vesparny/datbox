@@ -18,7 +18,7 @@ function bundleCss () {
   })
 }
 
-function createHash(data) {
+function createHash (data) {
   return crypto
     .createHash('sha256')
     .update(data)
@@ -27,7 +27,7 @@ function createHash(data) {
     .replace(/\+|\/|=/g, '')
 }
 
-function buildHtml() {
+function buildHtml () {
   const html = `
   <!doctype html>
   <html class="no-js" lang="">
@@ -52,6 +52,7 @@ browserify('index.js', { debug: false })
   .transform('sheetify')
   .plugin('css-extract', { out: bundleCss })
   .bundle((err, buf) => {
+    if (err) return
     bundlejs = 'bundle-' + createHash(buf) + '.js'
     fs.writeFileSync('build/' + bundlejs, buf.toString())
     buildHtml()

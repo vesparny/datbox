@@ -18,17 +18,19 @@ module.exports = class Upload extends Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Dropzone
         render={({ files, over }, openFileDialog) => {
           return (
             <div
-              class="tc h-100"
-              style={{ border: over ? '10px red dashed' : 'inherit' }}
-            >
+              class='tc h-100'
+              style={{ border: over ? '10px red dashed' : 'inherit' }}>
               <div class='pa5'>
-                drag files or <a href='javascript:void(0)' onClick={openFileDialog}>click here</a>
+                drag files or{' '}
+                <a href='javascript:void(0)' onClick={openFileDialog}>
+                  click here
+                </a>
               </div>
 
               {files && (
@@ -51,8 +53,7 @@ module.exports = class Upload extends Component {
                             <div>
                               <button
                                 onClick={() =>
-                                  this.copyLink(archive.key.toString('hex'))}
-                              >
+                                  this.copyLink(archive.key.toString('hex'))}>
                                 click here to copy the link to share
                               </button>
                             </div>

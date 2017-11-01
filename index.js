@@ -9,8 +9,8 @@ const Download = require('./src/download')
 
 const App = () => (
   <Router>
-    <Upload path="/" />
-    <Download path="/d/:id" />
+    <Upload path='/' />
+    <Download path='/d/:id' />
   </Router>
 )
 

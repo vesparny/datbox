@@ -25,7 +25,7 @@ module.exports = class File extends Component {
     waiting: true
   }
 
-  share() {
+  share () {
     const swarm = webrtc(
       signalhub(
         'datbox-' + this.archive.discoveryKey.toString('hex'),
@@ -43,6 +43,7 @@ module.exports = class File extends Component {
         upload: true,
         download: true
       })
+
       pump(conn, peer, conn, () => {
         this.setState(prevState => ({
           peers: prevState.peers - 1
@@ -59,11 +60,11 @@ module.exports = class File extends Component {
 
   downloadFile = file => {
     this.archive.stat(file.name, (err, stat) => {
+      if (err) return
       let bytes = []
       const str = this.archive.createReadStream('/' + file.name)
       str.pipe(
         concat(raw => {
-          console.log('hereeeeee')
           this.setState(prevState => {
             return {
               files: prevState.files.map((f, i) => {
@@ -84,7 +85,6 @@ module.exports = class File extends Component {
         })
       )
       str.on('data', d => {
-        console.log(d)
         bytes = bytes.concat(d)
 
         this.setState(prevState => {
@@ -108,7 +108,7 @@ module.exports = class File extends Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     if (this.props.id) {
       setTimeout(() => {
         if (this.state.waiting) {
@@ -120,6 +120,7 @@ module.exports = class File extends Component {
         this.share()
         this.archive.on('content', () => {
           this.archive.readdir('/', (err, files) => {
+            if (err) return
             this.setState({
               files: files.map(file => ({
                 name: file,
@@ -158,7 +159,7 @@ module.exports = class File extends Component {
       })
     }
   }
-  render() {
+  render () {
     return this.props.render({
       ...this.state,
       ...{ archive: this.archive },
