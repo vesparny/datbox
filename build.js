@@ -11,7 +11,7 @@ mkdirp('build')
 let bundlejs = ''
 let bundlecss = ''
 
-function bundleCss() {
+function bundleCss () {
   return concat({ encoding: 'buffer' }, buf => {
     bundlecss = 'bundle-' + createHash(buf) + '.css'
     fs.writeFileSync('build/' + bundlecss, buf.toString())
