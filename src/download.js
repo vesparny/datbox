@@ -1,7 +1,7 @@
 /** @jsx h */
 
 const { h, Component } = require('preact')
-
+const fileSaver = require('file-saver')
 const Archive = require('./archive')
 
 module.exports = class Downlaod extends Component {
@@ -31,10 +31,13 @@ module.exports = class Downlaod extends Component {
                       <button onClick={() => downloadFile(file)}>
                         download {file.downloadSpeed} {downloadProgress + '%'}
                       </button>
-                      {file.downloadLink && (
-                        <a download={file.name} href={file.downloadLink}>
+                      {file.blob && (
+                        <button
+                          onClick={() => {
+                            fileSaver.saveAs(file.blob)
+                          }}>
                           downlaod ok
-                        </a>
+                        </button>
                       )}
                     </div>
                   )

@@ -47,6 +47,10 @@ function buildHtml () {
   fs.writeFileSync('build/index.html', html)
 }
 
+function buildRedirect () {
+  fs.writeFileSync('build/_redirects', '/* /index.html 200')
+}
+
 browserify('index.js', { debug: false })
   .transform('babelify', { sourceMaps: false })
   .transform('sheetify')
@@ -56,4 +60,5 @@ browserify('index.js', { debug: false })
     bundlejs = 'bundle-' + createHash(buf) + '.js'
     fs.writeFileSync('build/' + bundlejs, buf.toString())
     buildHtml()
+    buildRedirect()
   })

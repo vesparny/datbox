@@ -72,9 +72,7 @@ module.exports = class File extends Component {
                   return {
                     ...f,
                     ...{
-                      downloadLink: window.URL.createObjectURL(
-                        new window.File([raw], file)
-                      )
+                      blob: new window.File([raw], file.name)
                     }
                   }
                 }
