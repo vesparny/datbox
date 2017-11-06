@@ -3,20 +3,11 @@ const browserify = require('browserify')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
-const concat = require('concat-stream')
 
 rimraf.sync('build')
 mkdirp('build')
 
 let bundlejs = ''
-let bundlecss = ''
-
-function bundleCss () {
-  return concat({ encoding: 'buffer' }, buf => {
-    bundlecss = 'bundle-' + createHash(buf) + '.css'
-    fs.writeFileSync('build/' + bundlecss, buf.toString())
-  })
-}
 
 function createHash (data) {
   return crypto
@@ -32,15 +23,15 @@ function buildHtml () {
   <!doctype html>
   <html class="no-js" lang="">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/${bundlecss}">
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <title></title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
-        <script src="/${bundlejs}"></script>
+      <div id="root"></div>
+      <script src="/${bundlejs}"></script>
     </body>
   </html>
 `
@@ -53,8 +44,6 @@ function buildRedirect () {
 
 browserify('index.js', { debug: false })
   .transform('babelify', { sourceMaps: false })
-  .transform('sheetify')
-  .plugin('css-extract', { out: bundleCss })
   .bundle((err, buf) => {
     if (err) return
     bundlejs = 'bundle-' + createHash(buf) + '.js'

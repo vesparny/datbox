@@ -1,11 +1,7 @@
 {
+  "presets": ["env", "react"],
   "plugins": [
-    [
-      "transform-react-jsx",
-      {
-        "pragma": "h"
-      }
-    ],
+    "emotion",
     "transform-class-properties",
     "transform-object-rest-spread"
   ]
