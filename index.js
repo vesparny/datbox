@@ -1,5 +1,6 @@
 const React = require('react')
 const ReactDOM = require('react-dom')
+const nanologger = require('nanologger')
 const { BrowserRouter, Route } = require('react-router-dom')
 const { injectGlobal, css, keyframes } = require('emotion') // eslint-disable-line
 const { rgba, normalize } = require('polished')
@@ -9,6 +10,10 @@ const { colors, sizes } = require('./src/config')
 const Upload = require('./src/screens/upload')
 const Download = require('./src/screens/download')
 const { Box, H1, Flex, Text, Link } = require('./src/components/ui')
+const { version } = require('./package.json')
+const log = nanologger('app')
+
+log.info(`datbox v${version}`)
 
 injectGlobal`
 ${normalize()}

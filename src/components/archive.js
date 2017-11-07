@@ -126,7 +126,6 @@ module.exports = class Archive extends React.Component {
         })
       )
       str.on('data', d => {
-        console.log('d')
         bytes = bytes.concat(d)
         this.setState(prevState => {
           return {
