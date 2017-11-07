@@ -8,7 +8,7 @@ const { fadeInDown, fadeOutUp } = require('react-animations')
 const { colors, sizes } = require('./src/config')
 const Upload = require('./src/screens/upload')
 const Download = require('./src/screens/download')
-const { Box, H1, Flex, Text, A, Link } = require('./src/components/ui')
+const { Box, H1, Flex, Text, Link } = require('./src/components/ui')
 
 injectGlobal`
 ${normalize()}
@@ -19,15 +19,6 @@ ${normalize()}
 body {
   font-family: -apple-system,BlinkMacSystemFont,sans-serif;
   background-color: ${colors.white}
-}
-
-#container {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-}
-main {
-  flex: 1;
 }
 
 `
@@ -54,7 +45,7 @@ class App extends React.Component {
     const { animationReady, notification } = this.state
     return (
       <BrowserRouter>
-        <div id='container'>
+        <Box>
           {animationReady && (
             <Box
               css={{
@@ -117,18 +108,7 @@ class App extends React.Component {
               />
             </Box>
           </main>
-
-          <footer
-            css={{
-              boxShadow: `0px 9px 10px 5px ${rgba(colors.red, 1)}`
-            }}>
-            <Flex align='center' justify='center'>
-              <Box p={2}>
-                <A href='https://github.com/vesparny/datbox'>GitHub</A>
-              </Box>
-            </Flex>
-          </footer>
-        </div>
+        </Box>
       </BrowserRouter>
     )
   }

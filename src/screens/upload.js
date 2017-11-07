@@ -3,7 +3,7 @@ const copy = require('copy-text-to-clipboard')
 const { rgba } = require('polished')
 const Dropzone = require('react-dropzone')
 const Archive = require('../components/archive')
-const { Box, Text, Flex, Button } = require('../components/ui')
+const { Box, Text, Flex, Button, A } = require('../components/ui')
 const File = require('../components/file')
 const { colors } = require('../config')
 
@@ -48,6 +48,27 @@ module.exports = class Upload extends React.Component {
     const { files, dropzoneActive } = this.state
     return (
       <Box py={3} px={[2, 2, 0]}>
+        <Box pb={3} align='center'>
+          <Box py={1}>
+            <Text>
+              Datbox is an open source peer-to-peer file sharing service built
+              on top of{' '}
+              <A href='https://github.com/mafintosh/hyperdrive'>hyperdrive</A>
+            </Text>
+          </Box>
+          <Box py={1}>
+            <Text>
+              The source code is hosted on{' '}
+              <A href='https://github.com/vesparny/datbox'>GitHub</A>
+            </Text>
+          </Box>
+          <Box py={1}>
+            <Text>
+              Handcrafted by{' '}
+              <A href='https://twitter.com/vesparny'>@vesparny</A>
+            </Text>
+          </Box>
+        </Box>
         <Dropzone
           style={{
             height: '200px',
@@ -87,7 +108,7 @@ module.exports = class Upload extends React.Component {
                         height: 220
                       }}>
                       {ready ? (
-                        <Box>
+                        <Box width='100%'>
                           <Box py={1}>
                             <Text fontSize={3}>
                               Connected to {peers} peer(s)
