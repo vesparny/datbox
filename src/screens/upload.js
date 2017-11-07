@@ -50,7 +50,7 @@ module.exports = class Upload extends React.Component {
       <Box py={3} px={[2, 2, 0]}>
         <Dropzone
           style={{
-            height: '250px',
+            height: '200px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -66,7 +66,7 @@ module.exports = class Upload extends React.Component {
           onDragEnter={this.onDragEnter}
           onDragLeave={this.onDragLeave}>
           <Text
-            fontSize={[3, 4, 5]}
+            fontSize={[2, 3, 3]}
             css={{ opacity: dropzoneActive ? '.5' : '1' }}>
             Drop files here or click to upload.
           </Text>
@@ -87,7 +87,7 @@ module.exports = class Upload extends React.Component {
                         height: 220
                       }}>
                       {ready ? (
-                        <Box width='100%'>
+                        <Box>
                           <Box py={1}>
                             <Text fontSize={3}>
                               Connected to {peers} peer(s)
@@ -109,10 +109,12 @@ module.exports = class Upload extends React.Component {
                             </pre>
                             <Button
                               fontSize={3}
-                              onClick={() =>
-                                copy(
-                                  this.makeLink(archive.key.toString('hex'))
-                                )}>
+                              onClick={() => {
+                                copy(this.makeLink(archive.key.toString('hex')))
+                                this.props.onNotification(
+                                  'Link copied to clipoard'
+                                )
+                              }}>
                               copy the share link
                             </Button>
                           </Box>

@@ -6,22 +6,23 @@ const choppa = require('choppa')
 const webrtc = require('webrtc-swarm')
 const signalhub = require('signalhub')
 const pump = require('pump')
-const DEFAULT_SIGNALHUBS = ['https://signalhub.mafintosh.com'] // content will be stored in this folder
-const concat = require('concat-stream') // content will be stored in this folder
+const concat = require('concat-stream')
 const speedometer = require('speedometer')
 const pb = require('prettier-bytes')
 const speed = speedometer()
 
+const DEFAULT_SIGNALHUBS = [
+  'https://signalhub.mafintosh.com',
+  'https://signalhub-jccqtwhdwc.now.sh',
+  'https://signalhub-hzbibrznqa.now.sh'
+]
+
 module.exports = class Archive extends React.Component {
   state = {
-    files: this.props.files.map(file => ({
-      name: file.name,
-      size: file.size,
-      ready: false
-    })),
+    files: [],
     peers: 0,
-    ready: false,
-    waiting: true
+    loadingFiles: true,
+    ready: false
   }
 
   componentWillReceiveProps (nextProps) {
@@ -32,29 +33,35 @@ module.exports = class Archive extends React.Component {
 
   loadNewFiles (files) {
     this.archive = hyperdrive(ram)
+    this.setState({
+      files: files.map(file => ({
+        name: file.name,
+        size: file.size,
+        ready: false
+      })),
+      ready: false
+    })
     this.archive.on('ready', () => {
       let i = 0
       const loop = () => {
         if (i === files.length) return this.share()
         let file = files[i]
-        const fileList = i === 0 ? [] : this.state.files
-
         const stream = this.archive.createWriteStream(file.name)
         fileReaderStream(file, { chunkSize: 5 * 1024 * 1024 })
           .pipe(choppa(64 * 1024))
           .pipe(stream)
           .on('finish', () => {
-            this.setState({
-              files: [
-                ...fileList,
-                ...[
-                  {
-                    ...{ name: file.name, size: file.size },
-                    ...{ ready: true }
-                  }
-                ]
-              ]
-            })
+            this.setState(prevState => ({
+              files: prevState.files.map(f => {
+                if (f.name === file.name) {
+                  return { name: f.name, size: f.size, ready: true }
+                }
+                return {
+                  ...{ name: f.name, size: f.size },
+                  ...{ ready: !!f.ready }
+                }
+              })
+            }))
             i++
             loop()
           })
@@ -74,17 +81,15 @@ module.exports = class Archive extends React.Component {
         DEFAULT_SIGNALHUBS
       )
     )
-    swarm.on('peer', conn => {
+    swarm.on('peer', (conn, p, id) => {
       this.setState(prevState => ({
         peers: prevState.peers + 1,
-        ready: true,
-        waiting: false
+        ready: true
       }))
       const peer = this.archive.replicate({
         upload: true,
         download: true
       })
-
       pump(conn, peer, conn, () => {
         this.setState(prevState => ({
           peers: prevState.peers - 1
@@ -93,21 +98,24 @@ module.exports = class Archive extends React.Component {
     })
   }
 
-  downloadFile = file => {
-    this.archive.stat(file.name, (err, stat) => {
-      if (err) return
+  downloadFile = fileName => {
+    this.archive.stat(fileName, (err, stat) => {
+      if (err) {
+        console.log(err)
+        return
+      }
       let bytes = []
-      const str = this.archive.createReadStream('/' + file.name)
+      const str = this.archive.createReadStream('/' + fileName)
       str.pipe(
         concat(raw => {
           this.setState(prevState => {
             return {
               files: prevState.files.map((f, i) => {
-                if (file.name === f.name) {
+                if (fileName === f.name) {
                   return {
                     ...f,
                     ...{
-                      blob: new window.File([raw], file.name)
+                      blob: new window.File([raw], fileName)
                     }
                   }
                 }
@@ -118,17 +126,17 @@ module.exports = class Archive extends React.Component {
         })
       )
       str.on('data', d => {
+        console.log('d')
         bytes = bytes.concat(d)
         this.setState(prevState => {
           return {
             files: prevState.files.map((f, i) => {
-              if (file.name === f.name) {
+              if (fileName === f.name) {
                 return {
                   ...f,
                   ...{
                     downloadSpeed: pb(speed(d.length)) + '/s',
-                    progress: (f.progress || 0) + d.length,
-                    size: stat.size
+                    progress: (f.progress || 0) + d.length
                   }
                 }
               }
@@ -136,6 +144,9 @@ module.exports = class Archive extends React.Component {
             })
           }
         })
+      })
+      str.on('errror', err => {
+        console.log(err)
       })
     })
   }
@@ -146,13 +157,34 @@ module.exports = class Archive extends React.Component {
       this.share()
       this.archive.on('content', () => {
         this.archive.readdir('/', (err, files) => {
-          if (err) return
+          if (err) {
+            console.log(err)
+            return
+          }
+          files.forEach(fileName => {
+            this.archive.stat(fileName, (err, stat) => {
+              if (err) {
+                console.log(err)
+                return
+              }
+              this.setState(prevState => ({
+                files: prevState.files.map(f => {
+                  if (f.name === fileName) {
+                    return { ...f, ...{ size: stat.size } }
+                  }
+                  return { name: f.name, size: stat.size, progress: 0 }
+                })
+              }))
+            })
+          })
+
           this.setState({
             files: files.map(file => ({
               name: file,
               progress: 0,
               size: 0
-            }))
+            })),
+            loadingFiles: false
           })
         })
       })
@@ -166,6 +198,7 @@ module.exports = class Archive extends React.Component {
       this.loadNewFiles(this.props.files)
     }
   }
+
   render () {
     return this.props.render({
       ...this.state,

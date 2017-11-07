@@ -1,4 +1,5 @@
 const styled = require('react-emotion').default
+const { Link } = require('react-router-dom')
 const { lighten, transitions } = require('polished')
 
 const {
@@ -50,19 +51,37 @@ module.exports.Text.defaultProps = {
   p: 0
 }
 
-module.exports.A = styled('a')(
+const hrefStyles = {
+  ...transitions('all 0.1s ease-in'),
+  textDecoration: 'underline',
+  ':hover': {
+    color: lighten(0.1, colors.green),
+    textDecoration: 'underline'
+  }
+}
+
+module.exports.Link = styled(Link)(
   {
-    ...transitions('all 0.1s ease-in'),
-    textDecoration: 'underline',
-    ':hover': {
-      color: lighten(0.1, colors.green),
-      textDecoration: 'underline'
+    ...hrefStyles,
+    ...{
+      textDecoration: 'none',
+      ':hover': {
+        color: colors.red
+      }
     }
   },
   space,
   fontSize,
   color
 )
+module.exports.Link.defaultProps = {
+  fontSize: 3,
+  color: colors.red,
+  m: 0,
+  p: 0
+}
+
+module.exports.A = styled('a')(...hrefStyles, space, fontSize, color)
 module.exports.A.defaultProps = {
   fontSize: 2,
   color: colors.green,
@@ -70,12 +89,16 @@ module.exports.A.defaultProps = {
   p: 0
 }
 
-module.exports.Button = styled(module.exports.A.withComponent('button'))({
-  ...transitions('all 0.1s ease-in'),
-  background: 'transparent',
-  border: 'none',
-  cursor: 'pointer'
-})
+module.exports.Button = styled(module.exports.A.withComponent('button'))(
+  {
+    ...transitions('all 0.1s ease-in'),
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer'
+  },
+  fontSize,
+  color
+)
 module.exports.Button.defaultProps = {
   fontSize: 2,
   color: colors.green,
