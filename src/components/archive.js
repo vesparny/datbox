@@ -81,7 +81,7 @@ module.exports = class Archive extends React.Component {
         DEFAULT_SIGNALHUBS
       )
     )
-    swarm.on('peer', (conn, p, id) => {
+    swarm.on('peer', conn => {
       this.setState(prevState => ({
         peers: prevState.peers + 1,
         ready: true
@@ -96,6 +96,9 @@ module.exports = class Archive extends React.Component {
         }))
       })
     })
+    swarm.on('close', conn => {
+      console.log('sad')
+    })
   }
 
   downloadFile = fileName => {
@@ -105,7 +108,7 @@ module.exports = class Archive extends React.Component {
         return
       }
       let bytes = []
-      const str = this.archive.createReadStream('/' + fileName)
+      const str = this.archive.createReadStream(fileName)
       str.pipe(
         concat(raw => {
           this.setState(prevState => {
@@ -151,8 +154,8 @@ module.exports = class Archive extends React.Component {
     })
   }
 
-  loadFilesFromExistingArchive () {
-    this.archive = hyperdrive(ram, this.props.id)
+  loadFilesFromExistingArchive (id) {
+    this.archive = hyperdrive(ram, id)
     this.archive.on('ready', () => {
       this.share()
       this.archive.on('content', () => {
@@ -193,7 +196,7 @@ module.exports = class Archive extends React.Component {
 
   componentDidMount () {
     if (this.props.id) {
-      this.loadFilesFromExistingArchive()
+      this.loadFilesFromExistingArchive(this.props.id)
     } else {
       this.loadNewFiles(this.props.files)
     }
