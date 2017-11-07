@@ -96,9 +96,6 @@ module.exports = class Archive extends React.Component {
         }))
       })
     })
-    swarm.on('close', conn => {
-      console.log('sad')
-    })
   }
 
   downloadFile = fileName => {
