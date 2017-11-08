@@ -3,6 +3,7 @@ const browserify = require('browserify')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
+const minify = require('babel-minify')
 
 rimraf.sync('build')
 mkdirp('build')
@@ -46,8 +47,10 @@ browserify('index.js', { debug: false })
   .transform('babelify', { sourceMaps: false })
   .bundle((err, buf) => {
     if (err) return
-    bundlejs = 'bundle-' + createHash(buf) + '.js'
-    fs.writeFileSync('build/' + bundlejs, buf.toString())
+    bundlejs = 'bundle-' + createHash(buf)
+    const { code, map } = minify(buf.toString())
+    fs.writeFileSync('build/' + bundlejs + '.js', code)
+    fs.writeFileSync('build/' + bundlejs + '.js.map', map)
     buildHtml()
     buildRedirect()
   })
