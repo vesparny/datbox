@@ -32,7 +32,7 @@ function buildHtml () {
     </head>
     <body>
       <div id="root"></div>
-      <script src="/${bundlejs}"></script>
+      <script src="/${bundlejs}.js"></script>
     </body>
   </html>
 `
